@@ -1,0 +1,33 @@
+
+
+- name: stop_etcd
+  ansible.builtin.service:
+    name: etcd
+    state: stopped
+
+
+- name: stop_patroni
+  service:
+    name: patroni
+    state: stopped
+
+- name: stop_postgresql
+  service:
+    name: postgresql
+    state: stopped
+
+- name: disable_etcd
+  service:
+    name: etcd
+    enabled: false
+
+- name: disable_patroni
+  service:
+    name: patroni
+    enabled: false
+
+- name: disable_postgresql
+  service:
+    name: postgresql
+    enabled: false
+

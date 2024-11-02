@@ -1,0 +1,17 @@
+- name: patroni configs
+  tags: patroni
+  template:
+    src: patroni.j2
+    dest: /etc/patroni/patroni.yml
+
+
+
+- name: patroni service
+  tags: patroni
+  template:
+    src: service.j2
+    dest: /etc/systemd/system/patroni.service
+
+- name: start patroni server
+  service: name=patroni state=restarted enabled=true daemon_reload=true
+  register: start_output

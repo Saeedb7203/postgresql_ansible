@@ -1,0 +1,9 @@
+name: '{{ node_name }}'
+initial-cluster-token: {{ cluster_token }}
+initial-cluster-state: {{ cluster_state }}
+initial-cluster: node1=http://{{ node1_ip }}:2380,node2=http://{{ node2_ip }}:2380,node3=http://{{ node3_ip }}:2380
+data-dir: {{etcd_data}}
+initial-advertise-peer-urls: http://{{ node_ip }}:2380 
+listen-peer-urls: http://{{ node_ip }}:2380
+advertise-client-urls: http://{{ node_ip }}:2379
+listen-client-urls: http://127.0.0.1:2379,http://{{ node_ip }}:2379

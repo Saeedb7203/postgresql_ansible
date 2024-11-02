@@ -1,0 +1,84 @@
+- name: install Percona-release package 
+  tags: postgres,db,etcd,patroni
+  command: percona-release setup ppg16
+  when: ansible_distribution == "Ubuntu"
+
+
+- name: Install some Python and auxiliary packages to help with Patroni and etcd
+  tags: postgres,db,etcd,patroni
+  apt:
+    name:
+    - python3-pip
+    - python3-dev
+    - binutils
+    - percona-patroni
+    - etcd
+    - etcd-server
+    - etcd-client
+    - percona-pgbackrest
+  when: ansible_distribution == "Ubuntu"
+
+- name: stop etcd server
+  service: name=etcd state=stopped enabled=false
+
+- name: stop patroni server
+  service: name=patroni state=stopped enabled=false
+
+- name: stop postgres server
+  service: name=postgresql state=stopped enabled=false
+
+
+
+
+# - ansible.builtin.meta: flush_handlers
+
+- name: remove the data directory to force it to initialize a new Postgres cluster instance.
+  command: rm -rf /var/lib/postgresql/16/main
+
+
+- name: Config node1
+  tags: conf
+  template:
+    src: etcd.conf.j2
+    dest: /etc/etcd/etcd.conf.yaml
+  when: inventory_hostname == groups['db_servers'][0]
+
+- name: Config node2
+  tags: conf
+  template:
+    src: etcd.conf2.j2
+    dest: /etc/etcd/etcd.conf.yaml
+  when: inventory_hostname == groups['db_servers'][1]
+
+
+- name: Config node3
+  tags: conf
+  template:
+    src: etcd.conf3.j2
+    dest: /etc/etcd/etcd.conf.yaml
+  when: inventory_hostname == groups['db_servers'][2]
+
+
+- name: start etcd server
+  service: name=etcd state=started enabled=true
+  register: start_output
+
+- name: Add node to etcd
+  command: etcdctl member add node2 --peer-urls=http://172.16.2.129:2380
+  when: cluster_state=="new"
+
+
+- name: Wait for db2 to finish
+  when: inventory_hostname == groups['db_servers'][1]  # This task runs only on db2
+  ansible.builtin.pause:
+    seconds: 10
+- name: Run task on the first node (db1) after db2 loop
+  when:
+  - inventory_hostname == groups['db_servers'][1]
+  - start_output is succeeded
+  ansible.builtin.shell: etcdctl member add node3 --peer-urls=http://172.16.2.130:2380
+  delegate_to: db1
+
+
+
+

@@ -1,14 +1,13 @@
-- name: add ssh key for simone
-  authorized_key:
-    user: simone
-    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDDFKXMIafzQFacLs0RyQoeTvjFrtR4R2FIlOsvQXOfg ansible"
-
-- name: generate sshd_config file from template
-  tags: ssh
-  template:
-    src: "{{ ssh_template_file }}"
-    dest: /etc/ssh/sshd_config
-    owner: root
-    group: root
-    mode: 0644
-  notify: restart_sshd
+- name: install curl
+  apt:
+    name: curl
+- name: curl packages
+  command: curl -O https://repo.percona.com/apt/percona-release_latest.generic_all.deb
+- name: install dependencies
+  command: apt install -y gnupg2 lsb-release ./percona-release_latest.generic_all.deb
+- name: update repository index (Ubuntu)
+  tags: always
+  apt:
+    update_cache: yes
+  changed_when: false
+  when: ansible_distribution == "Ubuntu"

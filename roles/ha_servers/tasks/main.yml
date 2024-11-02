@@ -1,0 +1,29 @@
+- name: install Percona-release package 
+  tags: postgres,db,etcd,patroni
+  command: percona-release setup ppg16
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install percona-haproxy
+  tags: postgres,db,etcd,patroni
+  apt:
+    name:
+    - percona-haproxy
+  when: ansible_distribution == "Ubuntu"
+
+
+
+- name: Config HAProxy
+  tags: haconf
+  template:
+    src: config.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+
+
+- name: Wait for db2 to finish
+  ansible.builtin.pause:
+    seconds: 3
+
+
+
+- name: start haproxy server
+  service: name=haproxy state=restarted enabled=true

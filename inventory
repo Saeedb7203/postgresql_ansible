@@ -1,12 +1,9 @@
-[web_servers]
-172.16.250.132
-172.16.250.248
-
 [db_servers]
-172.16.250.133
+db1 ansible_host=172.16.2.128
+db2 ansible_host=172.16.2.129
+db3 ansible_host=172.16.2.130
 
-[file_servers]
-172.16.250.134
 
-[workstations]
-172.16.250.135
+[ha_servers]
+ha1 ansible_host=172.16.2.131
+ha2 ansible_host=172.16.2.132

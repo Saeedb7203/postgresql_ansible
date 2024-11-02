@@ -1,0 +1,10 @@
+- name: enable_etcd
+  service:
+    name: etcd
+    enabled: true
+  listen: "enable services"
+
+- name: start_etcd
+  service:
+    name: etcd
+    state: started

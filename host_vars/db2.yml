@@ -1,0 +1,15 @@
+node_name: node2
+node1_name: node1
+node2_name: node2
+node3_name: node3
+node_ip: 172.16.2.129
+node1_ip: 172.16.2.128
+node2_ip: 172.16.2.129
+node3_ip: 172.16.2.130
+etcd_data: /var/lib/etcd
+cluster_token: PostgreSQL_HA_Cluster_1
+cluster_state: existing
+data_dir: "/var/lib/postgresql/16/main"
+pg_bin_dir: "/usr/lib/postgresql/16/bin"
+namespace: "percona_lab"
+scope: "cluster_1"
